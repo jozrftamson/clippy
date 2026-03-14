@@ -30,7 +30,7 @@ You can use ClippyJS directly in the browser using CDN:
 Install and import an agent:
 
 ```js
-import { initAgent } from "clippyjs";
+import { initAgent, loadExistingAgent } from "clippyjs";
 import { Clippy } from "clippyjs/agents";
 
 // Load and show the agent
@@ -106,6 +106,9 @@ agent.resume();
 
 // Remove the agent from the DOM
 agent.dispose();
+
+// Recover a previously created agent instance
+const sameAgent = loadExistingAgent(agent._el);
 ```
 
 ## Text-to-Speech

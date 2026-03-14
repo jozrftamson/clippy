@@ -2,6 +2,9 @@ import Queue from "./queue.ts";
 import Animator from "./animator.ts";
 import Balloon from "./balloon.ts";
 
+const agentRegistry = new WeakMap<HTMLElement, Agent>();
+const activeAgents = new Set<Agent>();
+
 export interface AgentLoaders {
   agent: () => Promise<{ default: any }>;
   sound: () => Promise<{ default: any }>;
@@ -49,6 +52,8 @@ export default class Agent {
     });
 
     document.body.appendChild(this._el);
+    agentRegistry.set(this._el, this);
+    activeAgents.add(this);
 
     this._animator = new Animator(this._el, mapUrl, data, sounds);
     this._balloon = new Balloon(this._el);
@@ -700,6 +705,8 @@ export default class Agent {
     this._animator.dispose();
     this._balloon.dispose();
     this._queue.dispose();
+    activeAgents.delete(this);
+    agentRegistry.delete(this._el);
     this._el.remove();
   }
 
@@ -727,6 +734,21 @@ export async function initAgent(loaders: AgentLoaders): Promise<Agent> {
     _loadSounds(loaders),
   ]);
   return new Agent(map, data, sounds);
+}
+
+export function loadExistingAgent(element?: HTMLElement | null): Agent | undefined {
+  if (!element) {
+    return activeAgents.values().next().value;
+  }
+
+  let current: HTMLElement | null = element;
+  while (current) {
+    const agent = agentRegistry.get(current);
+    if (agent) {
+      return agent;
+    }
+    current = current.parentElement;
+  }
 }
 
 async function _loadSounds(loaders: AgentLoaders): Promise<Record<string, string>> {
