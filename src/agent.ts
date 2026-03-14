@@ -30,6 +30,7 @@ export default class Agent {
   _pointerDownHandle: (e: MouseEvent | TouchEvent) => void;
   _dblClickHandle: () => void;
   _tts: { rate: number; pitch: number; voice: string } | undefined;
+  _muted: boolean;
 
   /**
    * @param {string} mapUrl - URL to the agent's sprite sheet
@@ -53,6 +54,7 @@ export default class Agent {
     this._animator = new Animator(this._el, mapUrl, data, sounds);
     this._balloon = new Balloon(this._el);
     this._tts = data.tts;
+    this._muted = false;
 
     this._setupEvents();
   }
@@ -335,6 +337,7 @@ export default class Agent {
   stop() {
     this._queue.clear();
     this._animator.exitAnimation();
+    this._animator.stopAllSounds();
     this._balloon.hide();
     if (this._tts && "speechSynthesis" in window) {
       speechSynthesis.cancel();
@@ -356,6 +359,40 @@ export default class Agent {
    */
   animations() {
     return this._animator.animations();
+  }
+
+  /**
+   * Mute animation sounds and text-to-speech
+   */
+  mute() {
+    this.setMuted(true);
+  }
+
+  /**
+   * Unmute animation sounds and text-to-speech
+   */
+  unmute() {
+    this.setMuted(false);
+  }
+
+  /**
+   * Enable or disable audio output
+   * @param {boolean} muted
+   */
+  setMuted(muted: boolean) {
+    this._muted = muted;
+    this._animator.setMuted(muted);
+    if (muted && this._tts && "speechSynthesis" in window) {
+      speechSynthesis.cancel();
+    }
+  }
+
+  /**
+   * Check if audio output is muted
+   * @returns {boolean}
+   */
+  isMuted() {
+    return this._muted;
   }
 
   /**
@@ -660,7 +697,7 @@ export default class Agent {
   }
 
   _speakTTS(text: string) {
-    if (!this._tts || !("speechSynthesis" in window)) return;
+    if (this._muted || !this._tts || !("speechSynthesis" in window)) return;
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text.replaceAll("\n", " "));
     utterance.rate = this._tts.rate;

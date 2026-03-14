@@ -12,6 +12,7 @@ export default class Animator {
   _endCallback: Function | undefined;
   _started: boolean;
   _sounds: { [key: string]: HTMLAudioElement };
+  _muted: boolean;
   currentAnimationName: string | undefined;
   _overlays: HTMLElement[];
   _loop: number | undefined;
@@ -34,6 +35,7 @@ export default class Animator {
     this._endCallback = undefined;
     this._started = false;
     this._sounds = {};
+    this._muted = false;
     this.currentAnimationName = undefined;
     this.preloadSounds(sounds);
     this._overlays = [this._el];
@@ -192,6 +194,7 @@ export default class Animator {
    * @private
    */
   _playSound() {
+    if (this._muted) return;
     let s = this._currentFrame.sound;
     if (!s) return;
     let audio = this._sounds[s];
@@ -253,6 +256,24 @@ export default class Animator {
     window.clearTimeout(this._loop);
   }
 
+  setMuted(muted: boolean) {
+    this._muted = muted;
+    if (muted) {
+      this.stopAllSounds();
+    }
+  }
+
+  isMuted() {
+    return this._muted;
+  }
+
+  stopAllSounds() {
+    for (const key in this._sounds) {
+      this._sounds[key].pause();
+      this._sounds[key].currentTime = 0;
+    }
+  }
+
   /**
    * Resume animation
    */
@@ -266,8 +287,8 @@ export default class Animator {
     this._currentFrame = undefined;
     this._endCallback = undefined;
     this._started = false;
+    this.stopAllSounds();
     for (const key in this._sounds) {
-      this._sounds[key].pause();
       this._sounds[key].src = "";
     }
     this._sounds = {};
