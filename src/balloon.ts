@@ -13,7 +13,7 @@ export default class Balloon {
   WORD_SPEAK_TIME: number;
   CLOSE_BALLOON_DELAY: number;
   _BALLOON_MARGIN: number;
-  _complete: Function;
+  _complete: Function | undefined;
   _addWord: Function | undefined;
   _loop: number | undefined;
 
@@ -216,6 +216,13 @@ export default class Balloon {
     this._sayWords(text, hold, complete);
   }
 
+  _completeSpeech() {
+    if (!this._complete) return;
+    const complete = this._complete;
+    this._complete = undefined;
+    complete();
+  }
+
   /**
    * Show the balloon
    */
@@ -269,7 +276,7 @@ export default class Balloon {
         delete this._addWord;
         this._active = false;
         if (!this._hold) {
-          complete();
+          this._completeSpeech();
           this.hide();
         }
       } else {
@@ -314,7 +321,7 @@ export default class Balloon {
       done: () => {
         this._active = false;
         this._hold = false;
-        complete();
+        this._completeSpeech();
         this.hide();
       },
     };
@@ -324,11 +331,18 @@ export default class Balloon {
    * Close the balloon and trigger completion callback if held
    */
   close() {
-    if (this._active) {
-      this._hold = false;
-    } else if (this._hold) {
-      this._complete();
+    window.clearTimeout(this._loop);
+    if (this._hiding) {
+      window.clearTimeout(this._hiding);
+      this._hiding = null;
     }
+
+    delete this._addWord;
+    this._active = false;
+    this._hold = false;
+    this._hidden = true;
+    this._balloon.style.display = "none";
+    this._completeSpeech();
   }
 
   /**

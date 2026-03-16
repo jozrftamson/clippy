@@ -305,7 +305,7 @@ export default class Agent {
    * Close the current speech balloon
    */
   closeBalloon() {
-    this._balloon.hide();
+    this._balloon.close();
   }
 
   /**

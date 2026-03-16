@@ -4,7 +4,7 @@
 
 ## Overview
 
-ClippyJS is a modern ESM rewrite of [Clippy.JS](http://smore.com/clippy-js) — it adds nostalgic Windows 98-style animated assistant characters (Clippy and friends) to any website. Zero runtime dependencies, fully tree-shakeable, lazy-loaded agents with embedded sprites and sounds.
+ClippyJS is a modern ESM rewrite of [Clippy.JS](http://smor2.com/clippy-js) — it adds nostalgic Windows 98-style animated assistant characters (Clippy and friends) to any website. Zero runtime dependencies, fully tree-shakeable, lazy-loaded agents with embedded sprites and sounds.
 
 - **Package:** `clippyjs` (npm)
 - **Repository:** `pi0/clippyjs`

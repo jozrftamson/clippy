@@ -81,6 +81,9 @@ agent.speak("Hello! I'm here to help.", { tts: true });
 // Keep the balloon open until manually closed
 agent.speak("Read this carefully.", { hold: true });
 
+// Close a held balloon and allow queued actions to continue
+agent.closeBalloon();
+
 // Move to a given point, using animation if available
 agent.moveTo(100, 100);
 
@@ -116,7 +119,7 @@ Each agent has a unique voice personality using the [Web Speech API](https://dev
 agent.speak("Hello! I'm Clippy, your virtual assistant.", { tts: true });
 ```
 
-# License
+## License
 
 [MIT](./LICENCE)
 
