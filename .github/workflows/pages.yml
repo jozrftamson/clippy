@@ -26,7 +26,9 @@ jobs:
       - uses: actions/setup-node@v6
         with: { node-version: lts/*, cache: "pnpm" }
       - run: pnpm install
+      - run: pnpm build
       - run: pnpm vite build
+      - run: cp dist/clippy.min.js dist-pages/clippy.min.js
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist-pages }
       - id: deployment
