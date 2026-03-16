@@ -127,14 +127,26 @@ export default class Agent {
         return;
       }
 
+      let startedMoveTween = false;
       let callback = (name, state) => {
-        if (state === Animator.States.EXITED) {
-          complete();
-        }
         if (state === Animator.States.WAITING) {
+          if (startedMoveTween) return;
+          startedMoveTween = true;
           this._animate(this._el, { top: cy, left: cx }, duration, () => {
             this._animator.exitAnimation();
           });
+          return;
+        }
+
+        if (state === Animator.States.EXITED) {
+          // Some Move* animations do not expose WAITING/useExitBranching.
+          // In that case, run the movement tween after animation exit.
+          if (!startedMoveTween) {
+            startedMoveTween = true;
+            this._animate(this._el, { top: cy, left: cx }, duration, complete);
+            return;
+          }
+          complete();
         }
       };
 
