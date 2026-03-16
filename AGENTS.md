@@ -12,10 +12,10 @@ ClippyJS is a modern ESM rewrite of [Clippy.JS](http://smor2.com/clippy-js) — 
 
 ## Architecture
 
-```
+```text
 src/
-├── index.ts              # Main exports: { Agent, initAgent }
-├── agent.ts              # Core Agent class (show, hide, speak, moveTo, animate, drag)
+├── index.ts              # Main exports: { initAgent }
+├── agent.ts              # Core Agent class (show, hide, speak, moveTo, animate, drag, mute)
 ├── animator.ts           # Frame-by-frame sprite sheet animation engine
 ├── balloon.ts            # Speech bubble with typewriter effect and auto-repositioning
 ├── queue.ts              # Sequential action queue
@@ -33,7 +33,7 @@ src/
 
 | Class      | File              | Role                                                         |
 | ---------- | ----------------- | ------------------------------------------------------------ |
-| `Agent`    | `src/agent.ts`    | Main API surface — lifecycle, speech, movement, drag, queue  |
+| `Agent`    | `src/agent.ts`    | Main API surface — lifecycle, speech, movement, drag, queue, mute |
 | `Animator` | `src/animator.ts` | Sprite rendering, frame stepping, exit branching, sound sync |
 | `Balloon`  | `src/balloon.ts`  | Speech balloon with typewriter animation, auto-positioning   |
 | `Queue`    | `src/queue.ts`    | Sequential action queue with idle callback                   |
@@ -103,8 +103,8 @@ TTS personality per agent:
 
 ### Package exports
 
-```
-clippyjs            → Agent class
+```text
+clippyjs            → initAgent()
 clippyjs/agents     → All 10 agents
 clippyjs/agents/*   → Individual agents (bonzi, clippy, f1, genie, genius, links, merlin, peedy, rocky, rover)
 ```
@@ -117,6 +117,7 @@ clippyjs/agents/*   → Individual agents (bonzi, clippy, f1, genie, genius, lin
 | `obuild`           | Bundle builder (rolldown-based)  |
 | `vite`             | Dev server (`pnpm dev`)          |
 | `tsgo`             | Type checking (`pnpm typecheck`) |
+| `vitest` + `jsdom` | DOM-based unit/regression tests  |
 | `oxlint` + `oxfmt` | Linting and formatting           |
 | `automd`           | README badge/section formatting  |
 | `changelogen`      | Changelog and release management |
@@ -125,13 +126,16 @@ clippyjs/agents/*   → Individual agents (bonzi, clippy, f1, genie, genius, lin
 
 `build.config.mjs` uses obuild with a custom `inline-png` rolldown plugin that converts `.png` sprite sheets to base64 data URIs. Output goes to `dist/` with per-agent chunk naming (`dist/agents/<name>/`).
 
+It also produces a legacy global bundle at `dist/clippy.min.js` (IIFE) that exposes `window.clippy.load(...)` for non-module usage.
+
 ### Scripts
 
 | Script           | Command                                    |
 | ---------------- | ------------------------------------------ |
 | `pnpm dev`       | Start Vite dev server                      |
 | `pnpm build`     | Build with obuild                          |
-| `pnpm test`      | Lint + typecheck                           |
+| `pnpm test`      | Lint + typecheck + unit tests              |
+| `pnpm test:unit` | Run Vitest regression/unit tests           |
 | `pnpm typecheck` | Type check via tsgo                        |
 | `pnpm lint`      | oxlint + oxfmt check                       |
 | `pnpm fmt`       | automd + oxlint fix + oxfmt                |
@@ -163,4 +167,4 @@ Two GitHub Actions workflows in `.github/workflows/`:
 - When modifying build config or tooling, update the tooling/scripts sections in `AGENTS.md`
 - When changing CI workflows, update the CI/CD section in `AGENTS.md`
 - Run `pnpm fmt` before committing to ensure consistent formatting
-- Run `pnpm test` (lint + typecheck) to validate changes
+- Run `pnpm test` (lint + typecheck + unit tests) to validate changes

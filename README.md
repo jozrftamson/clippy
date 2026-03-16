@@ -97,6 +97,11 @@ agent.speak("When all else fails, bind some paper together. My name is Clippy.")
 // Speak with text-to-speech (uses Web Speech API)
 agent.speak("Hello! I'm here to help.", { tts: true });
 
+// Mute/unmute all sounds (animation sounds + TTS)
+agent.mute();
+agent.unmute();
+agent.setMuted(true);
+
 // Keep the balloon open until manually closed
 agent.speak("Read this carefully.", { hold: true });
 
