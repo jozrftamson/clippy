@@ -2,7 +2,16 @@
 
 Add Clippy or his friends to any website for instant nostalgia!
 
-[**Online Demo**](https://clippy.pi0.io/)
+[**Online Demo**](https://clippy.pi0.io/) | [**Agent Zoo**](https://clippy.pi0.io/zoo.html)
+
+If the hosted demo is temporarily unavailable, run it locally:
+
+```bash
+corepack enable
+corepack prepare pnpm@10.29.3 --activate
+pnpm install
+pnpm dev
+```
 
 ## Usage
 
@@ -45,6 +54,28 @@ For backwards compatibility, `window.CLIPPY_CDN` and the 4th `clippy.load(..., b
   </body>
 </html>
 ```
+
+### XenForo integration (legacy script)
+
+For XenForo (or other forum software without ESM build tooling), add the legacy bundle to your page template.
+
+1. In XenForo Admin CP, open `Appearance` -> `Templates`.
+2. Edit `PAGE_CONTAINER` (or a custom footer template).
+3. Add this near the end of `<body>`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/clippyjs/dist/clippy.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    clippy.load("Clippy", function (agent) {
+      agent.show();
+      agent.speak("Welcome to the forum!");
+    });
+  });
+</script>
+```
+
+If you only want Clippy on specific pages, wrap the script with XenForo template conditions.
 
 ### npm package
 
