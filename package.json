@@ -31,7 +31,8 @@
     "lint": "oxlint . && oxfmt --check .",
     "prepack": "pnpm build",
     "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
-    "test": "pnpm lint && pnpm typecheck",
+    "test": "corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test:unit",
+    "test:unit": "vitest run",
     "typecheck": "tsgo --noEmit --skipLibCheck"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "@vitest/coverage-v8": "latest",
     "automd": "latest",
     "changelogen": "latest",
+    "jsdom": "latest",
     "obuild": "latest",
     "oxfmt": "latest",
     "oxlint": "latest",
