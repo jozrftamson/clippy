@@ -29,6 +29,8 @@ You can use ClippyJS directly in the browser using CDN:
 
 If you need a classic non-module script (e.g. older CMS/forums), use the legacy global build. It exposes `window.clippy.load(...)` and embeds all agents, maps, and sounds (no external `BASE_PATH` needed).
 
+For backwards compatibility, `window.CLIPPY_CDN` and the 4th `clippy.load(..., basePath)` argument are still accepted and reflected in `clippy.BASE_PATH`, but they are not used to fetch assets in the modern legacy bundle.
+
 ```html
 <!doctype html>
 <html>
