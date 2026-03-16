@@ -25,6 +25,25 @@ You can use ClippyJS directly in the browser using CDN:
 </html>
 ```
 
+### Legacy script (no modules)
+
+If you need a classic non-module script (e.g. older CMS/forums), use the legacy global build. It exposes `window.clippy.load(...)` and embeds all agents, maps, and sounds (no external `BASE_PATH` needed).
+
+```html
+<!doctype html>
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/clippyjs/dist/clippy.min.js"></script>
+    <script>
+      clippy.load("Clippy", (agent) => {
+        agent.show();
+        agent.speak("Hello! I'm Clippy, your virtual assistant.");
+      });
+    </script>
+  </body>
+</html>
+```
+
 ### npm package
 
 Install and import an agent:
