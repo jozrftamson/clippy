@@ -1,1 +1,1 @@
-export { initAgent } from "./agent.ts";
+export { initAgent, loadExistingAgent } from "./agent.ts";
