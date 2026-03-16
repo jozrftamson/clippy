@@ -223,13 +223,6 @@ export default class Balloon {
     complete();
   }
 
-  _completeSpeech() {
-    if (!this._complete) return;
-    const complete = this._complete;
-    this._complete = undefined;
-    complete();
-  }
-
   /**
    * Show the balloon
    */
