@@ -17,6 +17,7 @@ export default class Agent {
   _animator: Animator;
   _balloon: Balloon;
   _hidden: boolean;
+  _muted: boolean;
   _idlePromise: Promise<void> | null;
   _idleResolve: Function | null;
   _offset: { top: number; left: number };
@@ -53,6 +54,7 @@ export default class Agent {
     this._animator = new Animator(this._el, mapUrl, data, sounds);
     this._balloon = new Balloon(this._el);
     this._tts = data.tts;
+    this._muted = false;
 
     this._setupEvents();
   }
@@ -273,7 +275,7 @@ export default class Agent {
   speak(text, options?: { hold?: boolean; tts?: boolean }) {
     this._addToQueue(function (complete) {
       this._balloon.speak(complete, text, options?.hold);
-      if (options?.tts) this._speakTTS(text);
+      if (options?.tts && !this._muted) this._speakTTS(text);
     }, this);
   }
 
@@ -297,8 +299,24 @@ export default class Agent {
       stream.push(chunk);
     }
 
-    if (options?.tts && text) this._speakTTS(text);
+    if (options?.tts && text && !this._muted) this._speakTTS(text);
     stream.done();
+  }
+
+  mute() {
+    this.setMuted(true);
+  }
+
+  unmute() {
+    this.setMuted(false);
+  }
+
+  setMuted(muted: boolean) {
+    this._muted = muted;
+    this._animator.setMuted(muted);
+    if (muted && "speechSynthesis" in window) {
+      speechSynthesis.cancel();
+    }
   }
 
   /**
@@ -660,7 +678,7 @@ export default class Agent {
   }
 
   _speakTTS(text: string) {
-    if (!this._tts || !("speechSynthesis" in window)) return;
+    if (this._muted || !this._tts || !("speechSynthesis" in window)) return;
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text.replaceAll("\n", " "));
     utterance.rate = this._tts.rate;

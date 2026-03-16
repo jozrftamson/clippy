@@ -213,7 +213,14 @@ export default class Balloon {
     this.reposition();
 
     this._complete = complete;
-    this._sayWords(text, hold, complete);
+    this._sayWords(text, hold);
+  }
+
+  _completeSpeech() {
+    if (!this._complete) return;
+    const complete = this._complete;
+    this._complete = undefined;
+    complete();
   }
 
   _completeSpeech() {
@@ -259,10 +266,9 @@ export default class Balloon {
    * Animate text appearing word by word
    * @param {string} text - Text to animate
    * @param {boolean} hold - If true, keep balloon open after speaking
-   * @param {Function} complete - Callback when animation is done
    * @private
    */
-  _sayWords(text, hold, complete) {
+  _sayWords(text, hold) {
     this._active = true;
     this._hold = hold;
     let words = text.split(/( +|\n)/);
